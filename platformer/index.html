@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Shadow Quest - 2D Platformer</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+  <div id="game-app">
+    <div id="canvas-container">
+      <canvas id="game-canvas" width="960" height="540"></canvas>
+
+      <div id="ui-layer">
+      <div id="screen-menu" class="screen active">
+        <div class="menu-brand">
+          <h1 class="game-title">Shadow Quest</h1>
+          <div class="title-underline"></div>
+        </div>
+        <div class="menu-nav">
+          <button id="btn-play" class="menu-btn primary-btn">Play</button>
+          <button id="btn-level-select" class="menu-btn">Level Select</button>
+          <button id="btn-settings" class="menu-btn">Settings</button>
+          <button id="btn-controls" class="menu-btn">Controls</button>
+          <button id="btn-credits" class="menu-btn">Credits</button>
+          <button id="btn-menu-fullscreen" class="menu-btn">⛶ Fullscreen</button>
+        </div>
+        <div class="menu-footer">
+          <span class="version-tag">v1.0 • 20 Levels</span>
+        </div>
+      </div>
+
+      <div id="screen-level-select" class="screen">
+        <div class="level-select-container">
+          <div class="level-select-header">
+            <div class="header-left">
+              <button id="btn-level-back" class="nav-back-btn">← Back</button>
+              <h2>LEVEL SELECT</h2>
+            </div>
+            <div class="header-stats">
+              <div class="stat-pill">
+                <span class="stat-icon">🚩</span>
+                <span id="ls-levels-count">1 / 20</span>
+              </div>
+              <div class="stat-pill star-pill">
+                <span class="stat-icon">★</span>
+                <span id="ls-stars-count">0 / 60</span>
+              </div>
+              <div class="stat-pill">
+                <span class="stat-icon">🪙</span>
+                <span id="ls-coins-count">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="level-select-content">
+            <div class="worlds-sidebar">
+              <div class="world-card active" data-world="1">
+                <div class="world-card-icon">🌲</div>
+                <div class="world-card-info">
+                  <div class="world-name">World 1</div>
+                  <div class="world-desc">Green Fields (1–4)</div>
+                </div>
+                <div class="world-status status-unlocked">✓</div>
+              </div>
+              <div class="world-card" data-world="2">
+                <div class="world-card-icon">🍄</div>
+                <div class="world-card-info">
+                  <div class="world-name">World 2</div>
+                  <div class="world-desc">Dark Forest (5–8)</div>
+                </div>
+                <div class="world-status" id="w2-lock">🔒</div>
+              </div>
+              <div class="world-card" data-world="3">
+                <div class="world-card-icon">🏛️</div>
+                <div class="world-card-info">
+                  <div class="world-name">World 3</div>
+                  <div class="world-desc">Desert Ruins (9–12)</div>
+                </div>
+                <div class="world-status" id="w3-lock">🔒</div>
+              </div>
+              <div class="world-card" data-world="4">
+                <div class="world-card-icon">❄️</div>
+                <div class="world-card-info">
+                  <div class="world-name">World 4</div>
+                  <div class="world-desc">Ice Mountains (13–16)</div>
+                </div>
+                <div class="world-status" id="w4-lock">🔒</div>
+              </div>
+              <div class="world-card" data-world="5">
+                <div class="world-card-icon">🌋</div>
+                <div class="world-card-info">
+                  <div class="world-name">World 5</div>
+                  <div class="world-desc">Volcanic Core (17–20)</div>
+                </div>
+                <div class="world-status" id="w5-lock">🔒</div>
+              </div>
+            </div>
+
+            <div class="levels-grid-wrapper">
+              <div id="levels-grid" class="levels-grid"></div>
+              
+              <div id="level-detail-card" class="level-detail-card">
+                <div class="detail-header">
+                  <h3 id="detail-title">Level 1 - Getting Started</h3>
+                  <span id="detail-time-target" class="time-target">Est: 2 min</span>
+                </div>
+                <p id="detail-desc" class="detail-description">Learn basic movement and jumping.</p>
+                <div class="detail-stars-req">
+                  <div class="star-req-item">
+                    <span class="star-bullet" id="req-star-1">★</span>
+                    <span>Complete the level</span>
+                  </div>
+                  <div class="star-req-item">
+                    <span class="star-bullet" id="req-star-2">★</span>
+                    <span id="req-star-2-text">Collect all coins</span>
+                  </div>
+                  <div class="star-req-item">
+                    <span class="star-bullet" id="req-star-3">★</span>
+                    <span id="req-star-3-text">No damage taken</span>
+                  </div>
+                </div>
+                <div class="detail-footer">
+                  <div class="detail-best-score">Best Score: <span id="detail-score-val">0</span></div>
+                  <button id="btn-start-level" class="play-level-btn">Start Level</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="hud" class="hud-container">
+        <div class="hud-left">
+          <div id="hud-hearts" class="hearts-row">
+            <span class="heart full"></span>
+            <span class="heart full"></span>
+            <span class="heart full"></span>
+          </div>
+          <div class="level-badge" id="hud-level-badge">L1: Getting Started</div>
+        </div>
+
+        <div class="hud-center">
+          <div id="boss-hud-bar" class="boss-health-container hidden">
+            <div class="boss-info-row">
+              <span id="boss-name" class="boss-name-label">Ancient Guardian</span>
+              <span id="boss-phase-label" class="boss-phase-tag">Phase 1</span>
+            </div>
+            <div class="boss-bar-track">
+              <div id="boss-bar-fill" class="boss-bar-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hud-right">
+          <div class="hud-stat-pill">
+            <span class="hud-icon coin-icon">🪙</span>
+            <span id="hud-coins">0</span>
+          </div>
+          <div class="hud-stat-pill">
+            <span class="hud-icon">⏱</span>
+            <span id="hud-timer">00:00</span>
+          </div>
+          <div class="hud-stat-pill score-pill">
+            <span id="hud-score">0</span>
+          </div>
+          <button id="btn-fullscreen" class="hud-btn" title="Toggle Fullscreen (F)">⛶</button>
+          <button id="btn-pause" class="hud-btn" title="Pause (ESC)">⏸</button>
+        </div>
+      </div>
+
+      <div id="modal-pause" class="modal-backdrop">
+        <div class="modal-card">
+          <h2 class="modal-title">Paused</h2>
+          <div class="modal-btn-list">
+            <button id="btn-resume" class="menu-btn primary-btn">Resume</button>
+            <button id="btn-restart" class="menu-btn">Restart Level</button>
+            <button id="btn-pause-fullscreen" class="menu-btn">⛶ Fullscreen</button>
+            <button id="btn-pause-settings" class="menu-btn">Settings</button>
+            <button id="btn-pause-level-select" class="menu-btn">Level Select</button>
+            <button id="btn-pause-main-menu" class="menu-btn">Main Menu</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="modal-settings" class="modal-backdrop">
+        <div class="modal-card settings-card">
+          <h2 class="modal-title">Settings</h2>
+          <div class="settings-group">
+            <div class="setting-item">
+              <label for="toggle-music">Music</label>
+              <div class="setting-controls">
+                <input type="checkbox" id="toggle-music" checked>
+                <input type="range" id="slider-music" min="0" max="100" value="70">
+              </div>
+            </div>
+            <div class="setting-item">
+              <label for="toggle-sfx">Sound Effects</label>
+              <div class="setting-controls">
+                <input type="checkbox" id="toggle-sfx" checked>
+                <input type="range" id="slider-sfx" min="0" max="100" value="80">
+              </div>
+            </div>
+            <div class="setting-item">
+              <label for="toggle-shake">Screen Shake</label>
+              <input type="checkbox" id="toggle-shake" checked>
+            </div>
+          </div>
+          <div class="settings-actions">
+            <button id="btn-toggle-fullscreen" class="menu-btn">⛶ Fullscreen</button>
+            <button id="btn-reset-save" class="danger-btn">Reset All Progress</button>
+            <button id="btn-settings-close" class="menu-btn primary-btn">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="modal-controls" class="modal-backdrop">
+        <div class="modal-card controls-card">
+          <h2 class="modal-title">Controls & Tips</h2>
+          <div class="controls-list">
+            <div class="control-row">
+              <div class="keys"><kbd>A</kbd> / <kbd>D</kbd> or <kbd>←</kbd> <kbd>→</kbd></div>
+              <div class="desc">Move Left / Right</div>
+            </div>
+            <div class="control-row">
+              <div class="keys"><kbd>W</kbd> / <kbd>↑</kbd> or <kbd>Space</kbd></div>
+              <div class="desc">Jump (Hold for higher jump)</div>
+            </div>
+            <div class="control-row">
+              <div class="keys"><kbd>J</kbd> / <kbd>Z</kbd> / <kbd>X</kbd> / <kbd>C</kbd></div>
+              <div class="desc">Sword Attack</div>
+            </div>
+            <div class="control-row">
+              <div class="keys"><kbd>F</kbd></div>
+              <div class="desc">Toggle Fullscreen</div>
+            </div>
+            <div class="control-row">
+              <div class="keys"><kbd>ESC</kbd> or <kbd>P</kbd></div>
+              <div class="desc">Pause Game</div>
+            </div>
+          </div>
+          <div class="tips-box">
+            <p><strong>Combat:</strong> Jump and land on normal enemies to stomp bounce them, or use your sword attack!</p>
+            <p><strong>Platforming:</strong> Jump buffering and coyote time allow precise maneuvers on narrow and moving ledges.</p>
+          </div>
+          <button id="btn-controls-close" class="menu-btn primary-btn">Got It</button>
+        </div>
+      </div>
+
+      <div id="modal-credits" class="modal-backdrop">
+        <div class="modal-card credits-card">
+          <h2 class="modal-title">Shadow Quest</h2>
+          <p class="credits-lead">A 20-Level Indie Side-Scrolling Platformer</p>
+          <div class="credits-body">
+            <p>Crafted with pure HTML5 Canvas, Web Audio API, and Vanilla JavaScript.</p>
+            <p>Featuring 5 distinct worlds, 20 handcrafted levels, intelligent enemy AI, and multi-phase epic boss encounters.</p>
+          </div>
+          <button id="btn-credits-close" class="menu-btn primary-btn">Back</button>
+        </div>
+      </div>
+
+      <div id="modal-level-clear" class="modal-backdrop">
+        <div class="modal-card clear-card">
+          <div class="clear-banner">LEVEL CLEARED!</div>
+          <h3 id="clear-level-title" class="clear-title">Level 1 - Getting Started</h3>
+          
+          <div class="stars-awarded-row">
+            <div class="star-badge" id="clear-star-1"><span class="star-glyph">★</span><span class="star-label">Clear</span></div>
+            <div class="star-badge" id="clear-star-2"><span class="star-glyph">★</span><span class="star-label">All Coins</span></div>
+            <div class="star-badge" id="clear-star-3"><span class="star-glyph">★</span><span class="star-label">Flawless</span></div>
+          </div>
+
+          <div class="clear-stats-table">
+            <div class="stat-row">
+              <span>Time Taken:</span>
+              <strong id="clear-stat-time">01:42</strong>
+            </div>
+            <div class="stat-row">
+              <span>Coins Collected:</span>
+              <strong id="clear-stat-coins">15 / 15</strong>
+            </div>
+            <div class="stat-row">
+              <span>Enemies Defeated:</span>
+              <strong id="clear-stat-enemies">3</strong>
+            </div>
+            <div class="stat-row highlight-row">
+              <span>Level Score:</span>
+              <strong id="clear-stat-score">+2,250</strong>
+            </div>
+          </div>
+
+          <div class="modal-actions-row">
+            <button id="btn-clear-retry" class="menu-btn">Replay</button>
+            <button id="btn-clear-select" class="menu-btn">Levels</button>
+            <button id="btn-clear-next" class="menu-btn primary-btn">Next Level →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="modal-game-over" class="modal-backdrop">
+        <div class="modal-card death-card">
+          <h2 class="death-title">YOU DIED</h2>
+          <p id="death-reason" class="death-sub">Be careful with the traps and enemies!</p>
+          <div class="modal-actions-row">
+            <button id="btn-death-retry" class="menu-btn primary-btn">Try Again</button>
+            <button id="btn-death-select" class="menu-btn">Level Select</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="modal-victory" class="modal-backdrop">
+        <div class="modal-card victory-card">
+          <div class="victory-trophy">👑</div>
+          <h2 class="victory-title">VICTORY!</h2>
+          <p class="victory-sub">You conquered the Shadow Citadel and defeated the Shadow Wyrm!</p>
+          <div class="victory-stats-box">
+            <div class="vic-stat"><span>Total Stars:</span> <strong id="vic-total-stars">60 / 60</strong></div>
+            <div class="vic-stat"><span>Total Coins:</span> <strong id="vic-total-coins">520</strong></div>
+            <div class="vic-stat"><span>Final Score:</span> <strong id="vic-total-score">45,000</strong></div>
+          </div>
+          <div class="modal-actions-row">
+            <button id="btn-vic-menu" class="menu-btn primary-btn">Return to Title</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="toast-checkpoint" class="toast-notification">
+        <span class="toast-flag">🚩</span>
+        <span>Checkpoint Saved!</span>
+      </div>
+
+      <div id="touch-controls" class="touch-controls-container">
+        <div class="touch-left-cluster">
+          <button id="touch-btn-left" class="touch-btn">◀</button>
+          <button id="touch-btn-right" class="touch-btn">▶</button>
+        </div>
+        <div class="touch-right-cluster">
+          <button id="touch-btn-attack" class="touch-btn action-btn">⚔️</button>
+          <button id="touch-btn-jump" class="touch-btn jump-btn">▲</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="js/audio.js"></script>
+  <script src="js/save.js"></script>
+  <script src="js/physics.js"></script>
+  <script src="js/collision.js"></script>
+  <script src="js/camera.js"></script>
+  <script src="js/enemy.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/level.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
