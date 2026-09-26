@@ -1,4 +1,4 @@
-#play live =shadow-blade-2d.netlify.app
+#play live = https://shadow-blade-2d.netlify.app/
 
 
 # Shadow Quest
